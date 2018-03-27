@@ -49,7 +49,7 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
 
   int point;
   for (point=0; point < polygons->lastcol-1; point+=3) {
-    printf("Point 1: (%lf, %lf)\n", polygons->m[0][point], polygons->m[1][point]);
+    printf("\nPoint 1: (%lf, %lf)\n", polygons->m[0][point], polygons->m[1][point]);
     printf("Point 2: (%lf, %lf)\n", polygons->m[0][point+1], polygons->m[1][point+1]);
     printf("Point 3: (%lf, %lf)\n", polygons->m[0][point+2], polygons->m[1][point+2]);
     draw_line( polygons->m[0][point],
@@ -89,33 +89,13 @@ void add_box( struct matrix * edges,
               double x, double y, double z,
               double width, double height, double depth ) {
 
-  double x0, y0, z0, x1, y1, z1;
-  x0 = x;
-  x1 = x+width;
-  y0 = y;
-  y1 = y-height;
-  z0 = z;
-  z1 = z-depth;
-
-
-  // //front
-  // add_edge(edges, x0, y0, z0, x1, y0, z0);
-  // add_edge(edges, x1, y0, z0, x1, y1, z0);
-  // add_edge(edges, x1, y1, z0, x0, y1, z0);
-  // add_edge(edges, x0, y1, z0, x0, y0, z0);
-  //
-  // //back
-  // add_edge(edges, x0, y0, z1, x1, y0, z1);
-  // add_edge(edges, x1, y0, z1, x1, y1, z1);
-  // add_edge(edges, x1, y1, z1, x0, y1, z1);
-  // add_edge(edges, x0, y1, z1, x0, y0, z1);
-  //
-  // //sides
-  // add_edge(edges, x0, y0, z0, x0, y0, z1);
-  // add_edge(edges, x1, y0, z0, x1, y0, z1);
-  // add_edge(edges, x1, y1, z0, x1, y1, z1);
-  // add_edge(edges, x0, y1, z0, x0, y1, z1);
-
+    double x0, y0, z0, x1, y1, z1;
+    x0 = x;
+    x1 = x+width;
+    y0 = y;
+    y1 = y-height;
+    z0 = z;
+    z1 = z-depth;
     //front
     add_polygon(edges, x0, y0, z0, x1, y0, z0, x1, y1, z0);
     add_polygon(edges, x0, y0, z0, x1, y1, z0, x0, y1, z0);
@@ -134,9 +114,6 @@ void add_box( struct matrix * edges,
     //bottom side
     add_polygon(edges, x0, y1, z0, x0, y1, z1, x1, y1, z0);
     add_polygon(edges, x1, y1, z0, x0, y1, z1, x1, y1, z1);
-
-
-    // add_polygon(edges, 30, 30, 30, 100, 100, 100, 200, 200, 200);
 }
 
 
