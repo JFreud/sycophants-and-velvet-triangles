@@ -226,25 +226,57 @@ void add_torus( struct matrix * edges,
                 double r1, double r2, int step ) {
 
   struct matrix *points = generate_torus(cx, cy, cz, r1, r2, step);
-  int index, lat, longt;
+  int index, indnext, thendex, lastdex, lat, longt;
   int latStop, longStop, latStart, longStart;
   latStart = 0;
   latStop = step;
   longStart = 0;
   longStop = step;
 
+  double x0, y0, z0;
+  double x1a, y1a, z1a;
+  double x1b, y1b, z1b;
+  double x3, y3, z3;
+
   for ( lat = latStart; lat < latStop; lat++ ) {
     for ( longt = longStart; longt < longStop; longt++ ) {
 
       index = lat * step + longt;
-      add_edge( edges, points->m[0][index],
-                points->m[1][index],
-                points->m[2][index],
-                points->m[0][index] + 1,
-                points->m[1][index] + 1,
-                points->m[2][index] + 1);
-    }
+      indnext = ((lat + 1) * step + longt) % points->lastcol;
+      // indnext = (index + 1) % points->lastcol;
+      thendex = ((index + step)) % points->lastcol;
+      lastdex = (index + step - 1) % points->lastcol;
+
+      x0 = points->m[0][index];
+      y0 = points->m[1][index];
+      z0 = points->m[2][index];
+
+      x1a = points->m[0][indnext];
+      y1a = points->m[1][indnext];
+      z1a = points->m[2][indnext];
+
+      x1b = points->m[0][thendex];
+      y1b = points->m[1][thendex];
+      z1b = points->m[2][thendex];
+
+      x3 = points->m[0][lastdex];
+      y3 = points->m[1][lastdex];
+      z3 = points->m[2][lastdex];
+
+    //   add_polygon( edges, points->m[0][index],
+    //             points->m[1][index],
+    //             points->m[2][index],
+    //             points->m[0][indnext],
+    //             points->m[1][indnext],
+    //             points->m[2][indnext],
+    //             points->m[0][thendex],
+    //             points->m[1][thendex],
+    //             points->m[2][thendex]);
+    // }
+      add_polygon(edges, x0, y0, z0, x1a, y1a, z1a, x1b, y1b, z1b);
+      add_polygon(edges, x0, y0, z0, x1b, y1b, z1b, x3, y3, z3);
   }
+}
   free_matrix(points);
 }
 
