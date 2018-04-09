@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "ml6.h"
 #include "display.h"
@@ -74,9 +75,10 @@ void parse_file ( char * filename,
   clear_screen(s);
 
   color c;
-  c.red = 0;
-  c.green = 0;
-  c.blue = 0;
+  srand(time(NULL));
+  c.red = rand() % 255;
+  c.green = rand() % 255;
+  c.blue = rand() % 255;
 
   if ( strcmp(filename, "stdin") == 0 )
     f = stdin;
@@ -101,6 +103,10 @@ void parse_file ( char * filename,
     if ( strncmp(line, "box", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
       //printf("BOX\t%s", line);
+      srand(time(NULL));
+      c.red = rand() % 200 + 55;
+      c.green = rand() % 200 + 55;
+      c.blue = rand() % 200 + 55;
 
       sscanf(line, "%lf %lf %lf %lf %lf %lf",
              xvals, yvals, zvals,
@@ -112,6 +118,10 @@ void parse_file ( char * filename,
     else if ( strncmp(line, "sphere", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
       //printf("SPHERE\t%s", line);
+      srand(time(NULL));
+      c.red = rand() % 255;
+      c.green = rand() % 255;
+      c.blue = rand() % 255;
 
       sscanf(line, "%lf %lf %lf %lf",
              xvals, yvals, zvals, &r);
@@ -121,6 +131,10 @@ void parse_file ( char * filename,
     else if ( strncmp(line, "torus", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
       //printf("torus\t%s", line);
+      srand(time(NULL));
+      c.red = rand() % 255;
+      c.green = rand() % 255;
+      c.blue = rand() % 255;
 
       sscanf(line, "%lf %lf %lf %lf %lf",
              xvals, yvals, zvals, &r, &r1);
@@ -175,6 +189,10 @@ void parse_file ( char * filename,
     }//end line
 
     else if ( strncmp(line, "scale", strlen(line)) == 0 ) {
+      srand(time(NULL));
+      c.red = rand() % 255;
+      c.green = rand() % 255;
+      c.blue = rand() % 255;
       fgets(line, sizeof(line), f);
       //printf("SCALE\t%s", line);
       sscanf(line, "%lf %lf %lf",
@@ -186,6 +204,10 @@ void parse_file ( char * filename,
     }//end scale
 
     else if ( strncmp(line, "move", strlen(line)) == 0 ) {
+      srand(time(NULL));
+      c.red = rand() % 255;
+      c.green = rand() % 255;
+      c.blue = rand() % 255;
       fgets(line, sizeof(line), f);
       //printf("MOVE\t%s", line);
       sscanf(line, "%lf %lf %lf",
@@ -197,6 +219,10 @@ void parse_file ( char * filename,
     }//end translate
 
     else if ( strncmp(line, "rotate", strlen(line)) == 0 ) {
+      srand(time(NULL));
+      c.red = rand() % 255;
+      c.green = rand() % 255;
+      c.blue = rand() % 255;
       fgets(line, sizeof(line), f);
       //printf("Rotate\t%s", line);
       sscanf(line, "%c %lf",

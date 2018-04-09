@@ -49,17 +49,21 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
 
   int point;
   for (point=0; point < polygons->lastcol; point+=3) {
-    printf("\nPoint 1: (%lf, %lf)\n", polygons->m[0][point], polygons->m[1][point]);
-    printf("Point 2: (%lf, %lf)\n", polygons->m[0][point+1], polygons->m[1][point+1]);
-    printf("Point 3: (%lf, %lf)\n", polygons->m[0][point+2], polygons->m[1][point+2]);
+    // printf("\nPoint 1: (%lf, %lf, %lf)\n", polygons->m[0][point], polygons->m[1][point], polygons->m[2][point]);
+    // printf("Point 2: (%lf, %lf, %lf)\n", polygons->m[0][point+1], polygons->m[1][point+1], polygons->m[2][point+1]);
+    // printf("Point 3: (%lf, %lf, %lf)\n", polygons->m[0][point+2], polygons->m[1][point+2], polygons->m[2][point+2]);
 
     double Ax = polygons->m[0][point+1] - polygons->m[0][point];
     double Ay = polygons->m[1][point+1] - polygons->m[1][point];
+    // double Az = polygons->m[2][point+1] - polygons->m[2][point];
 
     double Bx = polygons->m[0][point+2] - polygons->m[0][point];
     double By = polygons->m[1][point+2] - polygons->m[1][point];
+    // double Bz = polygons->m[2][point+2] - polygons->m[2][point];
+
 
     if (Ax * By - Ay * Bx > 0) { //cross product > 0
+    // if(1) {
       draw_line( polygons->m[0][point],
                  polygons->m[1][point],
                  polygons->m[0][point+1],
@@ -106,21 +110,21 @@ void add_box( struct matrix * edges,
     z0 = z;
     z1 = z-depth;
     //front
-    add_polygon(edges, x0, y0, z0, x1, y0, z0, x1, y1, z0);
-    add_polygon(edges, x0, y0, z0, x1, y1, z0, x0, y1, z0);
-    //back
+    add_polygon(edges, x0, y0, z0, x0, y1, z0, x1, y1, z0);
+    add_polygon(edges, x1, y1, z0, x1, y0, z0, x0, y0, z0);
+    // // //back
     add_polygon(edges, x0, y0, z1, x1, y0, z1, x0, y1, z1);
-    add_polygon(edges, x0, y1, z1, x1, y1, z1, x1, y0, z1);
-    //left side
+    add_polygon(edges, x1, y1, z1, x0, y1, z1, x1, y0, z1);
+    // // //left side
     add_polygon(edges, x0, y0, z0, x0, y0, z1, x0, y1, z0);
-    add_polygon(edges, x0, y1, z0, x0, y1, z1, x0, y1, z1);
-    //right side
+    add_polygon(edges, x0, y1, z0, x0, y0, z1, x0, y1, z1);
+    // // //right side
     add_polygon(edges, x1, y0, z0, x1, y1, z1, x1, y0, z1);
     add_polygon(edges, x1, y0, z0, x1, y1, z0, x1, y1, z1);
-    //top side
-    add_polygon(edges, x0, y0, z0, x1, y0, z0, x1, y0, z1);
-    add_polygon(edges, x0, y0, z0, x0, y0, z1, x1, y0, z1);
-    //bottom side
+    // //top side
+    add_polygon(edges, x1, y0, z0, x0, y0, z1, x0, y0, z0);
+    add_polygon(edges, x1, y0, z1, x0, y0, z1, x1, y0, z0);
+    // // //bottom side
     add_polygon(edges, x0, y1, z0, x0, y1, z1, x1, y1, z0);
     add_polygon(edges, x1, y1, z0, x0, y1, z1, x1, y1, z1);
 }
@@ -147,56 +151,53 @@ void add_sphere( struct matrix * edges,
 
   struct matrix *points = generate_sphere(cx, cy, cz, r, step);
   int index, thendex, lastdex, lat, longt;
-  // int indnext;
+  int indnext;
+  // int filloutdex;
   int latStop, longStop, latStart, longStart;
   latStart = 0;
   latStop = step;
   longStart = 0;
   longStop = step;
-
+  printf("Step sphere: %d\n", step);
   step++;
 
+
   double x0, y0, z0;
-  double x1, y1, z1;
+  double x1a, y1a, z1a;
+  double x1b, y1b, z1b;
   double x2, y2, z2;
 
   for ( lat = latStart; lat < latStop; lat++ ) {
     for ( longt = longStart; longt <= longStop; longt++ ) {
-            index = lat * step + longt;
-            printf("\nindex: %d\n", index);
-            // indnext = ((lat + 1) * step + longt) % points->lastcol;
-            // printf("indnext1: %d\n", indnext);
-            // indnext = (index + 1) % points->lastcol;
-            // printf("indnext2: %d\n", indnext);
-            // indnext = index;
-            thendex = (index + step) % points->lastcol;
-            printf("thendex: %d\n", thendex);
-            lastdex = (index + step - 1) % points->lastcol;
-            printf("lastdex: %d\n", lastdex);
+      index = lat * step + longt; //triangle start
+      // printf("\nindex: %d\n", index);
+      indnext = (index + 1) % points->lastcol; //horizontal from start (longitude)
+      // printf("indnext: %d\n", indnext);
+      thendex = (index + step) % points->lastcol; //one below start (latitude)
+      // printf("thendex: %d\n", thendex);
+      lastdex = (index + step - 1) % points->lastcol; //corner 4 (lat + long)
+      // printf("lastdex: %d\n", lastdex);
+      // filloutdex = index % points->lastcol;
 
-            x0 = points->m[0][index];
-            y0 = points->m[1][index];
-            z0 = points->m[2][index];
+      x0 = points->m[0][index];
+      y0 = points->m[1][index];
+      z0 = points->m[2][index];
 
-            x1 = points->m[0][thendex];
-            y1 = points->m[1][thendex];
-            z1 = points->m[2][thendex];
+      x1a = points->m[0][indnext];
+      y1a = points->m[1][indnext];
+      z1a = points->m[2][indnext];
 
-            x2 = points->m[0][lastdex];
-            y2 = points->m[1][lastdex];
-            z2 = points->m[2][lastdex];
+      x1b = points->m[0][thendex];
+      y1b = points->m[1][thendex];
+      z1b = points->m[2][thendex];
 
-          //   add_polygon( edges, points->m[0][index],
-          //             points->m[1][index],
-          //             points->m[2][index],
-          //             points->m[0][indnext],
-          //             points->m[1][indnext],
-          //             points->m[2][indnext],
-          //             points->m[0][thendex],
-          //             points->m[1][thendex],
-          //             points->m[2][thendex]);
-          // }
-            add_polygon(edges, x0, y0, z0, x1, y1, z1, x2, y2, z2);
+      x2 = points->m[0][lastdex];
+      y2 = points->m[1][lastdex];
+      z2 = points->m[2][lastdex];
+
+
+      add_polygon(edges, x0, y0, z0, x1a, y1a, z1a, x1b, y1b, z1b);
+      add_polygon(edges, x0, y0, z0, x1b, y1b, z1b, x2, y2, z2);
         }
       }
   free_matrix(points);
@@ -269,7 +270,8 @@ void add_torus( struct matrix * edges,
 
   struct matrix *points = generate_torus(cx, cy, cz, r1, r2, step);
   int index, thendex, lastdex, lat, longt;
-  // int indnext;
+  int indnext;
+  // int filloutdex;
   int latStop, longStop, latStart, longStart;
   latStart = 0;
   latStop = step;
@@ -277,47 +279,44 @@ void add_torus( struct matrix * edges,
   longStop = step;
 
   double x0, y0, z0;
-  double x1, y1, z1;
+  double x1a, y1a, z1a;
+  double x1b, y1b, z1b;
   double x2, y2, z2;
+
+
+  printf("Step torus: %d\n", step);
 
   for ( lat = latStart; lat < latStop; lat++ ) {
     for ( longt = longStart; longt < longStop; longt++ ) {
 
-      index = lat * step + longt;
-      printf("\nindex: %d\n", index);
-      // indnext = ((lat + 1) * step + longt) % points->lastcol;
-      // printf("indnext1: %d\n", indnext);
-      // indnext = (index + 1) % points->lastcol;
-      // printf("indnext2: %d\n", indnext);
-      // indnext = index;
-      thendex = (index + step) % points->lastcol;
-      printf("thendex: %d\n", thendex);
-      lastdex = (index + step - 1) % points->lastcol;
-      printf("lastdex: %d\n", lastdex);
+      index = lat * step + longt; //triangle start
+      // printf("\nindex: %d\n", index);
+      indnext = (index + 1) % points->lastcol; //horizontal from start (longitude)
+      // printf("indnext: %d\n", indnext);
+      thendex = (index + step) % points->lastcol; //one below start (latitude)
+      // printf("thendex: %d\n", thendex);
+      lastdex = (index + step - 1) % points->lastcol; //corner 4 (lat - 1)
+      // printf("lastdex: %d\n", lastdex);
+      // filloutdex = index % points->lastcol;
 
       x0 = points->m[0][index];
       y0 = points->m[1][index];
       z0 = points->m[2][index];
 
-      x1 = points->m[0][thendex];
-      y1 = points->m[1][thendex];
-      z1 = points->m[2][thendex];
+      x1a = points->m[0][indnext];
+      y1a = points->m[1][indnext];
+      z1a = points->m[2][indnext];
+
+      x1b = points->m[0][thendex];
+      y1b = points->m[1][thendex];
+      z1b = points->m[2][thendex];
 
       x2 = points->m[0][lastdex];
       y2 = points->m[1][lastdex];
       z2 = points->m[2][lastdex];
 
-    //   add_polygon( edges, points->m[0][index],
-    //             points->m[1][index],
-    //             points->m[2][index],
-    //             points->m[0][indnext],
-    //             points->m[1][indnext],
-    //             points->m[2][indnext],
-    //             points->m[0][thendex],
-    //             points->m[1][thendex],
-    //             points->m[2][thendex]);
-    // }
-      add_polygon(edges, x0, y0, z0, x1, y1, z1, x2, y2, z2);
+      add_polygon(edges, x0, y0, z0, x1a, y1a, z1a, x1b, y1b, z1b);
+      add_polygon(edges, x0, y0, z0, x1b, y1b, z1b, x2, y2, z2);
   }
 }
   free_matrix(points);

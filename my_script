@@ -1,0 +1,25 @@
+ident
+sphere
+0 0 0 250
+torus
+50 0 0 10 150
+torus
+-50 0 0 10 150
+rotate
+z 90
+apply
+ident
+torus
+50 0 0 10 150
+torus
+-50 0 0 10 150
+rotate
+z -90
+move
+250 290 0
+rotate
+x 30
+apply
+display
+save
+face2.png
